@@ -25,7 +25,7 @@ class HelloAgentsLLM:
             collected_content= []
             for chunk in response:
                 content = chunk.choices[0].delta.content or ""
-                print(content,end="",flush=True)
+                #print(content,end="",flush=True)
                 collected_content.append(content)
             print()
             return "".join(collected_content)
