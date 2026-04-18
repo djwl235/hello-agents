@@ -35,7 +35,8 @@ class MySimpleAgent(SimpleAgent):
             messages.append({"role":message.role,"content":message.content})
         messages.append({"role":"user","content":input_text})
         if not self.enable_tool_calling:
-            response = self.llm.invoke(messages, **kwargs)
+            raw_response = self.llm.invoke(messages, **kwargs)
+            response = self._extract_response_text(raw_response)
             self.add_message(Message(input_text, "user"))
             self.add_message(Message(response, "assistant"))
             print(f"✅ {self.name} 响应完成")
@@ -69,7 +70,8 @@ class MySimpleAgent(SimpleAgent):
         final_response = ""
         while current_iterations<max_tool_iterations:
             current_iterations+=1
-            response = self.llm.invoke(messages=messages,**kwargs)
+            raw_response = self.llm.invoke(messages=messages,**kwargs)
+            response = self._extract_response_text(raw_response)
             tool_calls=self._parse_tool_calls(response)
             if not tool_calls:
                 final_response=response
@@ -81,12 +83,13 @@ class MySimpleAgent(SimpleAgent):
                 result=self._execute_tool_call(call['tool_name'],call['parameters'])
                 tool_results.append(result)
                 clean_response = clean_response.replace(call['original'],"")
-            messages.append(Message(clean_response,"assistant"))
+            messages.append({"role": "assistant", "content": clean_response})
             tool_results_text = "\n\n".join(tool_results)
             messages.append({"role": "user", "content": f"工具执行结果:\n{tool_results_text}\n\n请基于这些结果给出完整的回答。"})
             continue
         if current_iterations>=max_tool_iterations and not final_response:
-            final_response = self.llm.invoke(messages,**kwargs)
+            raw_final_response = self.llm.invoke(messages,**kwargs)
+            final_response = self._extract_response_text(raw_final_response)
         self.add_message(Message(input_text, "user"))
         self.add_message(Message(final_response, "assistant"))
         print(f"✅ {self.name} 响应完成")
@@ -158,6 +161,17 @@ class MySimpleAgent(SimpleAgent):
                 param_dict = {'input': parameters}
 
         return param_dict
+
+    def _extract_response_text(self, response) -> str:
+        """兼容不同 LLM 返回类型，统一提取文本内容。"""
+        if isinstance(response, str):
+            return response
+
+        content = getattr(response, "content", None)
+        if isinstance(content, str):
+            return content
+
+        return str(response)
     
     def stream_run(self, input_text: str, **kwargs) -> Iterator[str]:
         print(f"🌊 {self.name} 开始流式处理: {input_text}")
