@@ -1,0 +1,199 @@
+{
+  "timestamp": "2026-05-19T10:17:53.793485",
+  "summary": {
+    "total_cases": 10,
+    "success_cases": 10,
+    "failed_cases": 0,
+    "success_rate": 100.0,
+    "total_execution_time": 120.90509057044983
+  },
+  "cases": [
+    {
+      "case_id": 1,
+      "question": "请计算 12 + 30 / 3",
+      "description": "基础算术计算 (加除法)",
+      "success": true,
+      "execution_time": 17.30699920654297,
+      "expected_tools": [
+        "calculator"
+      ],
+      "expected_keywords": [
+        "22"
+      ],
+      "keywords_found": [
+        "22"
+      ],
+      "failure_reason": "",
+      "response": "根据四则运算优先级，先计算除法再计算加法，最终结果为22。"
+    },
+    {
+      "case_id": 2,
+      "question": "请计算 8 * 9",
+      "description": "基础算术计算 (乘法)",
+      "success": true,
+      "execution_time": 8.488771677017212,
+      "expected_tools": [],
+      "expected_keywords": [
+        "72"
+      ],
+      "keywords_found": [
+        "72"
+      ],
+      "failure_reason": "",
+      "response": "72"
+    },
+    {
+      "case_id": 3,
+      "question": "记录今天复习了 RealLLM 工具调用",
+      "description": "笔记记录功能",
+      "success": true,
+      "execution_time": 6.897533655166626,
+      "expected_tools": [
+        "note"
+      ],
+      "expected_keywords": [
+        "成功",
+        "记录"
+      ],
+      "keywords_found": [
+        "成功",
+        "记录"
+      ],
+      "failure_reason": "",
+      "response": "已成功为你记录内容：今天复习了 RealLLM 工具调用。"
+    },
+    {
+      "case_id": 4,
+      "question": "查询笔记 RAGTool",
+      "description": "笔记查询 - RAGTool",
+      "success": true,
+      "execution_time": 9.990419149398804,
+      "expected_tools": [
+        "note"
+      ],
+      "expected_keywords": [
+        "RAGTool"
+      ],
+      "keywords_found": [
+        "RAGTool"
+      ],
+      "failure_reason": "",
+      "response": "查询到的和「RAGTool」相关的笔记如下：\n1. 2026-05-15 16:31:00：今天复习了 RAGTool\n2. 2026-05-15 16:32:22：今天复习了 RAGTool\n3. 2026-05-18 10:52:47：今天复习了 RAGTool"
+    },
+    {
+      "case_id": 5,
+      "question": "查询笔记 RealLLM",
+      "description": "笔记查询 - RealLLM",
+      "success": true,
+      "execution_time": 21.148563861846924,
+      "expected_tools": [
+        "note"
+      ],
+      "expected_keywords": [
+        "RealLLM"
+      ],
+      "keywords_found": [
+        "RealLLM"
+      ],
+      "failure_reason": "",
+      "response": "查询到的和「RealLLM」相关的笔记如下：\n1. 2026-05-18 15:47:38：今天复习了 RealLLM 工具调用\n2. 2026-05-18 15:49:35：今天复习了 RealLLM 工具调用\n3. 2026-05-18 15:51:08：今天复习了 RealLLM 工具调用\n4. 2026-05-18 15:53:22：今天复习了 RealLLM 工具调用\n5. 2026-05-18 16:01:17：今天复习了 RealLLM 工具调用\n6. 2026-05-18 16:04:19：今天复习了 RealLLM 工具调用\n7. 2026-05-18 16:27:12：今天复习了 RealLLM 工具调用\n8. 2026-05-18 16:59:09：今天复习了 RealLLM 工具调用\n9. 2026-05-18 17:07:20：今天复习了 RealLLM 工具调用\n10. 2026-05-18 17:15:01：今天复习了 RealLLM 工具调用\n11. 2026-05-19 10:16:21：今天复习了 RealLLM 工具调用"
+    },
+    {
+      "case_id": 6,
+      "question": "RAGTool 的评分函数哪里容易出问题？",
+      "description": "知识库问答 - RAGTool评分",
+      "success": true,
+      "execution_time": 15.609012603759766,
+      "expected_tools": [],
+      "expected_keywords": [
+        "字符",
+        "语义",
+        "匹配"
+      ],
+      "keywords_found": [
+        "字符",
+        "语义",
+        "匹配"
+      ],
+      "failure_reason": "",
+      "response": "目前RAGTool的评分函数是通过计算查询中的字符在chunk中出现的次数作为相似度分数，这种字符匹配的模式容易存在以下问题：\n1. 漏召回语义相关的内容：无法识别语义一致但字符重叠度低的内容，比如同义表述、同一概念的不同表达（如查询是“苹果手机”，相关内容写的是“iPhone”）会因为字符重合少被判定为不相关，漏掉有效信息。\n2. 误召回语义无关的内容：如果某段内容包含大量和查询重叠的停用词、通用常用词，哪怕和查询语义完全无关，也会因为字符重合度高拿到较高分数，被误当做相关内容召回。\n3. 权重设置不合理：没有区分不同字符的重要性，无实际意义的停用词和核心专业词的出现对分数的贡献是一致的，无法真实反映内容的相关性。"
+    },
+    {
+      "case_id": 7,
+      "question": "我现在应该复习 ReActAgent 的什么？",
+      "description": "学习建议 - ReActAgent",
+      "success": true,
+      "execution_time": 15.85057282447815,
+      "expected_tools": [],
+      "expected_keywords": [
+        "ReActAgent",
+        "复习",
+        "核心"
+      ],
+      "keywords_found": [
+        "ReActAgent",
+        "复习",
+        "核心"
+      ],
+      "failure_reason": "",
+      "response": "结合现有知识点，你可以重点复习ReActAgent的以下内容：\n1. **核心特性与和基础Agent的差异**：重点掌握ReActAgent和SimpleAgent的区别——SimpleAgent仅支持单一工具调用，而ReActAgent添加了显式的Thought-Action-Observation（思考-动作-观测）循环，支持多步推理和多次工具调用，这是它的核心能力特征。\n2. **配套的工具错误处理逻辑**：因为ReActAgent会多次调用工具，需要复习工具执行失败时的返回规范：要返回清晰的错误信息，说明失败原因和可能的解决方案，便于ReActAgent进行重试或者调整后续策略。\n3. **系统提示词对ReActAgent的影响**：系统提示词会直接影响ReActAgent的表现，需要复习系统提示词的作用，包括如何在提示词中定义ReActAgent的角色、能力、可用工具列表、行为规范等内容。"
+    },
+    {
+      "case_id": 8,
+      "question": "ToolRegistry 的作用是什么？",
+      "description": "知识库问答 - ToolRegistry",
+      "success": true,
+      "execution_time": 8.340489864349365,
+      "expected_tools": [],
+      "expected_keywords": [
+        "ToolRegistry",
+        "工具",
+        "管理"
+      ],
+      "keywords_found": [
+        "ToolRegistry",
+        "工具",
+        "管理"
+      ],
+      "failure_reason": "",
+      "response": "ToolRegistry是工具管理的核心组件，它的核心作用如下：\n1. 集中管理所有可用工具，负责工具的注册、查找、执行相关流程；\n2. 生成工具描述信息，供大语言模型（LLM）理解各个工具的功能、参数等内容，支撑Agent正确调用工具。"
+    },
+    {
+      "case_id": 9,
+      "question": "刚才我问了什么？",
+      "description": "上下文记忆 - 回忆前一个问题",
+      "success": true,
+      "execution_time": 7.033210754394531,
+      "expected_tools": [],
+      "expected_keywords": [
+        "ToolRegistry"
+      ],
+      "keywords_found": [
+        "ToolRegistry"
+      ],
+      "failure_reason": "",
+      "response": "你刚才提出的问题是：ToolRegistry 的作用是什么？"
+    },
+    {
+      "case_id": 10,
+      "question": "查找本地知识库 ReActAgent 的核心循环是什么？",
+      "description": "知识库问答 - ReActAgent核心循环",
+      "success": true,
+      "execution_time": 10.239516973495483,
+      "expected_tools": [],
+      "expected_keywords": [
+        "ReActAgent",
+        "思考",
+        "动作",
+        "观察"
+      ],
+      "keywords_found": [
+        "ReActAgent",
+        "思考",
+        "动作"
+      ],
+      "failure_reason": "",
+      "response": "ReActAgent的核心循环是**Thought（思考）-Action（动作）-Observation（观测）**循环：\nAgent首先进行推理思考确定要执行的动作，接着调用对应工具完成Action，再获取工具返回的结果作为Observation，将观测结果放回上下文后继续后续推理，可循环多步直到完成任务目标。"
+    }
+  ]
+}

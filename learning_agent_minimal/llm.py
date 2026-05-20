@@ -26,6 +26,23 @@ class MockLLM(BaseLLM):
                     return f"根据工具结果，答案是：{result}"
             elif messages[i]["role"] == "user" and "##相关知识库" in messages[i]["content"]: 
                     return "根据你的学习笔记，你最近在学习 NoteTool；根据知识库，你还需要复习 ReActAgent 的 Thought-Action-Observation 循环和 RAG 的基本流程。建议下一步复习 ReActAgent 与ToolRegistry 的关系。"
+            elif messages[i]["role"] == "user" and "MCP" in messages[i]["content"] and "计算" in messages[i]["content"]:
+                    content = messages[i]["content"]
+                    # 从文本中提取两个数字
+                    numbers = re.findall(r"\d+", content)
+                    if len(numbers) >= 2:
+                        return f"[TOOL_CALL:mcp_add:{numbers[0]} {numbers[1]}]"
+                    else:
+                        return "MCP 计算需要两个数字。"
+            elif messages[i]["role"] == "user" and "MCP" in messages[i]["content"] and "统计字符" in messages[i]["content"]:
+                    content = messages[i]["content"]
+                    # 提取 "统计字符" 后面的文本
+                    match = re.search(r"统计字符\s*[:：]?\s*(.*)", content)
+                    if match:
+                        text = match.group(1).strip()
+                        return f"[TOOL_CALL:mcp_count_chars:{text}]"
+                    else:
+                        return "[TOOL_CALL:mcp_count_chars:]"
             elif messages[i]["role"] == "user" and re.search(r"计算\s*[:：]?\s*[\d\s\+\-\*/\(\)\.]+", messages[i]["content"]):
                     content = messages[i]["content"]
                     match = re.search(r"计算[:：]?\s*([\d\s\+\-\*/\(\)\.]+)", content)
