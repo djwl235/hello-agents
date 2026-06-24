@@ -4,15 +4,24 @@ from tools.calculator import CalculatorTool
 from tools.rag_tool import RAGTool
 from tools.registry import ToolRegistry
 from tools.note_tool import NoteTool
+from real_embedding import RealEmbedding
+from tools.structured_note_tool import StructuredNoteTool
+from tools.embedding_rag_tool import EmbeddingRAGTool
 from context import ContextBuilder
 from tools.mcp_tool_factory import MCPToolFactory
 class LearningAssistant:
-    def __init__(self,server_path = None,llm = None):
+    def __init__(self,server_path = None,llm = None, use_embedding_rag=False):
         self.llm = llm or MockLLM()
         self.tool_registry = ToolRegistry()
         self.tool_registry.register(CalculatorTool())
         self.tool_registry.register(RAGTool(knowledge_dir="learning_agent_minimal/knowledge_base"))
         self.tool_registry.register(NoteTool(note_path="learning_agent_minimal/notes/learning_log.md"))
+        self.tool_registry.register(StructuredNoteTool())
+        if use_embedding_rag:
+            self.tool_registry.register(EmbeddingRAGTool(embedding=RealEmbedding()))
+            self.rag_tool_name = "embedding_rag_search"
+        else:
+            self.rag_tool_name = "rag_search"
         self.server_path = server_path
         self.add_MCP_tool()
         self.agent = SimpleAgent(name="学习助手",
@@ -24,13 +33,18 @@ class LearningAssistant:
             return self.agent.run(user_input)
         rag_query = self.build_rag_query(user_input=user_input)
         note_query = self.build_note_query(user_input=user_input)
-        rag_context = self.tool_registry.execute("rag_search",rag_query)
+        rag_context = self.tool_registry.execute(self.rag_tool_name,rag_query)
         note_context = self.tool_registry.execute("note",f"search {note_query}")
+        strcutured_note_context = self.tool_registry.execute("structured_note",f"search {note_query}")
+        combined_note_context = (
+                f"{note_context}\n\n"
+                f"## 结构化笔记\n{strcutured_note_context}"
+            )
         context = ContextBuilder().build(
             history=self.agent.get_history(),
             user_input=user_input,
             rag_context=rag_context,
-            note_context=note_context
+            note_context=combined_note_context
         )
         return self.agent.run(context)
     def build_rag_query(self,user_input):
@@ -42,6 +56,10 @@ class LearningAssistant:
                 return keyword
         return user_input
     def route_intent(self,user_input):
+        if "结构化记录" in user_input:
+            return "direct_tool"
+        if "结构化查询" in user_input:
+            return "direct_tool"
         if "记录" in user_input:
           return "direct_tool"
         if "查询笔记" in user_input:

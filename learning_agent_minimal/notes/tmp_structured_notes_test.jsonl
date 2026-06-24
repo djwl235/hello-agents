@@ -1,0 +1,2 @@
+{"id": "5bfd9867-8464-411e-b4b7-803c878a8223", "created_at": "2026-06-24 14:50:23", "type": "learning", "tags": ["RAG", "Embedding", "min_score"], "content": "今天学完了 EmbeddingRAGTool，理解了 min_score 可以过滤无关问题", "summary": "今天学完了 EmbeddingRAGTool，理解了 min_score 可以过滤无关问题"}
+{"id": "a05847e1-e4f1-47fa-a67d-a4bf3d107f73", "created_at": "2026-06-24 14:50:23", "type": "learning", "tags": ["MCP"], "content": "今天复习了 MCP 外部工具接入", "summary": "今天复习了 MCP 外部工具接入"}

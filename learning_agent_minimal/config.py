@@ -29,3 +29,7 @@ class Config:
         self.llm_api_key = os.getenv("LLM_API_KEY", "")
         self.llm_model = os.getenv("LLM_MODEL", "")
         self.llm_base_url = os.getenv("LLM_BASE_URL", "")
+        self.embedding_provider =  os.getenv("EMBEDDING_PROVIDER", self.llm_provider)
+        self.embedding_api_key = os.getenv("EMBEDDING_API_KEY", self.llm_api_key)
+        self.embedding_model = os.getenv("EMBEDDING_MODEL", "")
+        self.embedding_base_url = os.getenv("EMBEDDING_BASE_URL", self.llm_base_url)

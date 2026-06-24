@@ -54,6 +54,14 @@ class MockLLM(BaseLLM):
             elif messages[i]["role"] == "user" and "查找本地知识库" in messages[i]["content"]:
                     content = messages[i]["content"]
                     return f"[TOOL_CALL:rag_search:{content}]"
+            elif messages[i]["role"] == "user" and "结构化记录" in messages[i]["content"]:
+                    content = messages[i]["content"]
+                    note = content.replace("结构化记录", "", 1).strip()
+                    return f"[TOOL_CALL:structured_note:add {note}]"
+            elif messages[i]["role"] == "user" and "结构化查询" in messages[i]["content"]: 
+                    content = messages[i]["content"]
+                    query = content.replace("结构化查询", "", 1).strip()
+                    return f"[TOOL_CALL:structured_note:search {query}]"
             elif messages[i]["role"] == "user" and "记录" in messages[i]["content"]:
                     content = messages[i]["content"]
                     note = content.replace("记录", "", 1).strip()
@@ -62,7 +70,6 @@ class MockLLM(BaseLLM):
                     content = messages[i]["content"]
                     query = content.replace("查询笔记", "", 1).strip()
                     return f"[TOOL_CALL:note:search {query}]"
-            
             elif messages[i]["role"] == "user":
                     last_message = messages[i]
                     break
