@@ -37,18 +37,28 @@ learning_agent_minimal/
   message.py                  # Message 数据结构
   llm.py                      # MockLLM
   real_llm.py                 # 真实 LLM 调用
+  real_embedding.py           # 真实 Embedding 调用
+  embedding.py                # MockEmbedding
+  embedding_base.py           # Embedding 接口基类
   llm_base.py                 # LLM 接口基类
   config.py                   # 配置读取
   cli.py                      # CLI 入口
+  mcp_server.py               # 自定义 MCP Server 示例
   tools/
     base.py                   # BaseTool
     registry.py               # ToolRegistry
     calculator.py             # CalculatorTool
     rag_tool.py               # RAGTool
+    vector_rag_tool.py        # 字符频率向量 RAG
+    embedding_rag_tool.py     # Embedding RAG
     note_tool.py              # NoteTool
+    structured_note_tool.py   # 结构化笔记工具
+    mcp_proxy_tool.py         # MCP 工具代理
+    mcp_tool_factory.py       # MCP 工具发现与注册
   knowledge_base/             # 本地知识库
   notes/                      # 学习笔记
-  real_agent_eval_results.md  # 真实 LLM 评估结果
+  vector_index/               # Embedding 索引缓存
+  eval_reports/               # 自动化评估报告
 ```
 
 ## 配置方式
@@ -114,8 +124,8 @@ python learning_agent_minimal\run_real_agent_eval.py
 -> 直接交给 Agent 走工具调用
 
 其他学习问题
--> RAGTool 检索知识库
--> NoteTool 搜索学习笔记
+-> RAGTool/EmbeddingRAGTool 检索知识库
+-> NoteTool/StructuredNoteTool 搜索学习笔记
 -> ContextBuilder 构造上下文
 -> Agent 调用 LLM 生成回答
 ```
@@ -129,6 +139,14 @@ python learning_agent_minimal\run_real_agent_eval.py
 4. 调用 ToolRegistry 执行工具
 5. 将工具结果作为 Observation 放回 messages
 6. 下一轮继续推理，直到得到最终答案或达到最大轮数
+```
+```text
+MCPProxyTool / MCPToolFactory
+将外部工具处理为统一接口,不改变调用方式前提下,自由接入外部工具
+```
+```text
+RealEmbedding
+接入真实模型,对知识库等进行向量化处理,同时在每次调用时首先判断是否存在vector_index,若有则直接加载不再初始化.
 ```
 
 ## 工具调用格式
@@ -165,24 +183,17 @@ LLM 如需调用工具，必须输出：
 
 注意：当前架构中，部分 RAG / Note 检索由 `LearningAssistant` 工作流主动执行，不一定表现为 LLM 显式输出 `TOOL_CALL`。
 
-## 已知问题
+## 新增能力
+```text
+mcp:
+同时支持外部工具及内部自己编写的工具, mcp_proxy_tool将mcp转化为tool_registr接口,即所有的工具都同样调用,同样描述没有区别,不增加新调用方式.
+```
+```text
+Embedding RAG:
+相较于原关键词RAG,新增了调用模型生成嵌入向量的新RAG,同时不移除原有RAG,可通过传参调用.相较于原有RAG,Embedding RAG更能落到生产环境,同时新增了向量存放json文件,便于保存已向量化的知识库,避免重复初始化.但可以优化接入各类向量数据库.
+```
+```text
+Structured Note:
+相较于原先笔记工具,整体功能不发生变化,但是新增例如summary tag等字段,记录更详细,同时summary字段便于后续总结使用.
+```
 
-- RAG 仍是关键词/字符级检索，不理解语义。
-- NoteTool 只是 Markdown 文件搜索，没有结构化索引。
-- 记忆主要依赖当前 session 的 `_history` 和笔记文件，缺少自动记忆判断。
-- 真实 LLM 有时会直接回答简单问题，而不是严格调用工具。
-- 没有流式输出。
-- 没有 Web 搜索能力。
-- 还没有自动化评估脚本，只是手工记录结果。
-
-## 下一步计划
-
-优先级建议：
-
-1. 增加端到端自动评估脚本，沉淀成功率和失败案例。
-2. 优化 RAG：更好的 chunk 切分、关键词权重、向量检索。
-3. 增加 LLM 工具调用稳定性测试和 prompt 调优。
-4. 将 NoteTool 改成结构化笔记，支持类型、标签和摘要。
-5. 视情况再考虑 LangGraph / LangChain，而不是过早重构。
-
-当前阶段的重点是理解 Agent 工程闭环，而不是追求框架复杂度。
